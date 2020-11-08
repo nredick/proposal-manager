@@ -122,7 +122,7 @@ def create_proposal(filename):
                  cell.value is not None]  # col letter from names in first row
 
     if len(col_names) != 7:
-        result.append(f'{time.ctime()} ERROR: Missing a header on the budget sheet.')
+        result.append(f'{time.ctime()} ERROR: Missing a header on the budget sheet. Make sure you are using the correct template and that it is the first sheet in the Excel workbook.')
         return result
 
     result.append(f'{time.ctime()} Getting budget data.')
