@@ -8,3 +8,6 @@ requirements.txt
 build/
 icon.icns
 .DS_Store
+dist
+build
+deprecated
