@@ -52,12 +52,6 @@ rm -rf build dist
 
 This repository contains the scripts used to parse and create the budget proposal, a python script for the tkinter integration of the app, and examples images of the app and desktop icon. 
 
-- build/
-  - Contains the app once it has been created 
-- dist/
-  - Contains build files, can be deleted. 
-- Pipfile
-  - Program dependency requirements as managed by the pipenv shell
 - requirements.txt
   - Program requirements created by ``` pip freeze > requirements.txt ```
 - proposal_creator.py 
