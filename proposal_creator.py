@@ -7,6 +7,7 @@ from openpyxl.styles import Border, Side, Alignment, Font
 
 
 #global vars
+result = []
 sub_D = []
 sub_I = []
 sub_Y = []
@@ -105,20 +106,26 @@ def set_indices(start_index, end_index, items, item_descriptions, item_prices,
 
 
 def create_proposal(filename):
-    global sub_D, sub_I, sub_Y, sub_option, count, total, full_border, total_border, side_border, specialConditions, phase_names, is_option_ls, contractor, numbers, item_prices, item_descriptions, items, revision_dates, siding_finish_index
-    start_time = time.time()
-    print(f'{time.ctime()} Starting proposal creation...')
-
-    workbook_data = openpyxl.load_workbook(filename, data_only=False)
+    global result, sub_D, sub_I, sub_Y, sub_option, count, total, full_border, total_border, side_border, specialConditions, phase_names, is_option_ls, contractor, numbers, item_prices, item_descriptions, items, revision_dates, siding_finish_index
+    #result.append(f'{time.ctime()} Starting proposal creation...')
 
     os.system(f'cp \"{filename}\" \"{filename}_temp.xlsx\"')  # make a temporary copy that can be opened as data only
+    result.append(f'{time.ctime()} Created temporary file: \"{filename}_temp.xlsx\"')
 
+    workbook_data = openpyxl.load_workbook(filename, data_only=False)
     workbook = openpyxl.load_workbook(f'{filename}_temp.xlsx', data_only=True)  # reopen the temp wb
+
+    result.append(f'{time.ctime()} Loading reference sheet.')
     ref = workbook[workbook.sheetnames[0]]  # get the reference sheet
 
     col_names = [[cell.value, cell.column_letter] for cell in ref['1'] if
                  cell.value is not None]  # col letter from names in first row
 
+    if len(col_names) != 7:
+        result.append(f'{time.ctime()} ERROR: Missing a header on the budget sheet.')
+        return result
+
+    result.append(f'{time.ctime()} Getting budget data.')
     # cells from columns in the rough budget sheet
     for couple in col_names:  # item names
         if couple[0] == 'ITEM':
@@ -149,6 +156,7 @@ def create_proposal(filename):
             revision_dates = [x.value for x in ref[f'{couple[1]}']]
 
     # convert the options list to true/false
+    result.append(f'{time.ctime()} Get options.')
     is_option = []
     for opt in is_option_ls:
         try:
@@ -161,18 +169,11 @@ def create_proposal(filename):
             is_option.append(False)
 
     # add proposal sheet next to the budget sheet in both wbs
-    workbook_data.create_sheet(f'Budget', 1)
-    '''
-    gray_box = revision_dates[contractor.index('ISSUE DATE:')]
-    if gray_box is not None and gray_box != '':
-        workbook.create_sheet(f'Budget - {gray_box}', 1)
-    else:
-        workbook.create_sheet(f'Budget', 1)
-        #workbook.create_sheet(f'TESTING', 1)
-    '''
-    proposal = workbook_data[workbook_data.sheetnames[1]]  # get new sheet as proposal
+    result.append(f'{time.ctime()} Add proposal sheet to workbook.')
+    proposal = workbook_data.create_sheet(f'Budget', 1)
 
     # formatting col widths
+    result.append(f'{time.ctime()} Formatting proposal.')
     proposal.column_dimensions['A'].width = 80.5
     proposal.column_dimensions['B'].width = 12.5
     proposal.column_dimensions['C'].width = 12.5
@@ -180,6 +181,7 @@ def create_proposal(filename):
 
     proposal.cell(row=count, column=5).value = 'Item cost markups'
 
+    result.append(f'{time.ctime()} Writing data to proposal.')
     # add initial issue date to the proposal
     issue_date = str(numbers[contractor.index('ISSUE DATE:')])
     proposal.cell(row=count, column=1).value = issue_date
@@ -320,6 +322,7 @@ def create_proposal(filename):
 
     # special conditions and signature
     print_conditions(proposal)
+    result.append(f'{time.ctime()} Finished writing data to proposal.')
 
     # $ formatting
     for cell in proposal['D']:
@@ -348,11 +351,10 @@ def create_proposal(filename):
     proposal.page_setup.fitToHeight = False
 
     # save/delete the finalized workbook/temp workbook
-
+    result.append(f'{time.ctime()} Saving final workbook and deleting temporary copy.')
     workbook_data.save(filename)
     workbook.save(f'{filename}_temp.xlsx')
     os.system(f'rm \"{filename}_temp.xlsx\"')
 
     #workbook.save(filename)
-    end_time = time.time()
-    print(f'{time.ctime()} Finished proposal creation. Elapsed time: {end_time - start_time}')
+    return result

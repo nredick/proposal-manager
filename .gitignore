@@ -1,0 +1,10 @@
+Pipfile*
+venv
+references
+.eggs/
+.idea/
+__pycache__/
+requirements.txt
+build/
+icon.icns
+.DS_Store

@@ -9,7 +9,7 @@ from setuptools import setup
 
 APP = ['proposal_manager_gui.py']
 DATA_FILES = []
-OPTIONS = {'iconfile': '/Users/nathalieredick/workspaces/proposal-manager/icon.icns'}
+OPTIONS = {'iconfile': '/Users/nathalieredick/workspaces/redbud/proposal-manager/icon.icns'}
 
 setup(
     app=APP,
