@@ -2,7 +2,7 @@
 
 *Created using the [openpyxl](https://pypi.org/project/openpyxl/), [py2app](https://pypi.org/project/py2app/), and [tkinter](https://docs.python.org/3/library/tkinter.html) python libraries.*
 
-The app was curated for Redbud Development, INC. 
+The app was curated for Redbud Development, INC. Check out *example_images* to see the app. 
 
 ## Project Description
 
