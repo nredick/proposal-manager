@@ -2,7 +2,6 @@ import os
 import time
 import tkinter as tk
 from tkinter import *
-from tkinter.ttk import *
 from tkinter import filedialog
 
 import proposal_creator
@@ -29,13 +28,13 @@ def create():
     out.pack(fill="both", expand="no")
     for i, line in enumerate(result):
         out.insert(END, f'{line}\n')
-        time.sleep(.15)
+        #time.sleep(.15)
         root.update()
     end_time = time.time()
     out.insert(END, f'{time.ctime()} Finished proposal creation. Elapsed time: {end_time - start_time}')
     out.insert(END, f'{time.ctime()} Opening proposal in Microsoft Excel...')
     root.update()
-    time.sleep(3)
+    #time.sleep(3)
     os.system(f'open \"{filename}\" -a \"Microsoft Excel\"')  # open the excel workbook
     #root.destroy()
 
