@@ -129,7 +129,7 @@ def create_proposal(filename):
     # cells from columns in the rough budget sheet
     for couple in col_names:  # item names
         if couple[0] == 'ITEM':
-            items = [x.value for x in ref[f'{couple[1]}']]
+            items = [str(x.value).strip() for x in ref[f'{couple[1]}']]
 
     for couple in col_names:  # item descriptions
         if couple[0] == 'DESCRIPTION':
@@ -198,6 +198,7 @@ def create_proposal(filename):
     count += 1
 
     # add header values
+    #print(items)
     proposal.cell(row=count, column=1).value = str(items[header_start + 1]).title()
     proposal[f'A{count}'].font = Font(bold=True)
     count += 1
