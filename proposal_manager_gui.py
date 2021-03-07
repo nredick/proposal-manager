@@ -1,37 +1,49 @@
 import os
 import time
-import tkinter as tk
 from tkinter import *
 from tkinter import filedialog
+from tkinter.messagebox import showinfo
 
-import proposal_creator
+import rough_budget
+import actual_budget
 
-clicked = False
+clicked = True
+
+def user_guide():
+    frame = Frame(root, bg=bg)
+    string = StringVar()
+    msg = "How to Use the Proposal Manager" \
+          "\n\nThe program accepts an input file of the type *.xlsx where the first " \
+          "sheet of the workbook matches the budget proposal format. Data " \
+          "will be taken from the first sheet in the file. When the program is done, " \
+          "the file with the budget in the second position will be opened in Excel.\n" \
+          "Note that the Rough and Actual budget proposal creators run independently (i.e. you can create one " \
+          "without needing to create the other.\n" \
+          "A new template file can be created in the File dropdown menu."
+    string.set(msg)
+
+    label = Message(root, textvariable=string, relief='raised')
+    label.pack()
 
 
-def click():
-    global clicked
-    more_info.pack(fill="both", expand="no")
-    if not clicked and more_info.winfo_exists():
-        more_info.pack_forget()  # destroys the label
-    clicked = not clicked
 
 
-def create():
-    more_info.pack_forget()
+
+
+def create_rough():
     start_time = time.time()
-    out.insert(INSERT, f'\n{time.ctime()} Starting proposal creation...\n')
+    out.insert(INSERT, f'\n{time.ctime()} Starting rough budget creation...\n')
     root.update()
     filename = filedialog.askopenfilename(initialdir="/", title="Select file",
                                           filetypes=[("Excel files", "*.xlsx")])
-    result = proposal_creator.create_proposal(filename)  # create proposal
+    result = rough_budget.create_proposal(filename)  # create proposal
     out.pack(fill="both", expand="no")
     for i, line in enumerate(result):
         out.insert(END, f'{line}\n')
         #time.sleep(.15)
         root.update()
     end_time = time.time()
-    out.insert(END, f'{time.ctime()} Finished proposal creation. Elapsed time: {end_time - start_time}')
+    out.insert(END, f'{time.ctime()} Finished rough budget creation. Elapsed time: {end_time - start_time}')
     out.insert(END, f'{time.ctime()} Opening proposal in Microsoft Excel...')
     root.update()
     #time.sleep(3)
@@ -39,38 +51,96 @@ def create():
     #root.destroy()
 
 
-# create tkinter window root
-root = Tk()
-root.configure(background='#abd3be')
+def create_actual():
+    start_time = time.time()
+    out.insert(INSERT, f'\n{time.ctime()} Starting actual budget creation...\n')
+    root.update()
+    filename = filedialog.askopenfilename(initialdir="/", title="Select file",
+                                          filetypes=[("Excel files", "*.xlsx")])
+    result = actual_budget.create_proposal(filename)  # create proposal
+    out.pack(fill="both", expand="no")
+    for i, line in enumerate(result):
+        out.insert(END, f'{line}\n')
+        #time.sleep(.15)
+        root.update()
+    end_time = time.time()
+    out.insert(END, f'{time.ctime()} Finished actual budget creation. Elapsed time: {end_time - start_time}')
+    out.insert(END, f'{time.ctime()} Opening proposal in Microsoft Excel...')
+    root.update()
+    #time.sleep(3)
+    os.system(f'open \"{filename}\" -a \"Microsoft Excel\"')  # open the excel workbook
+    #root.destroy()
 
-# set window title
-root.title("Redbud Proposal Manager")
+
+def create_new():
+    fn = "NEW client estimating template $(date +\"%b-%r\").xlsx"
+    os.system(f'cp "client estimating template.xlsx" {fn}')
+    os.system(f'open {fn}')
+
+
+# colours & styles
+fg = '#2f374a'
+bg = '#566a99'
+body_font = ('calibri', 10, 'bold', 'underline')
+#style = ttk.Style()
+
+# button style
+#style.configure('TButton', font=body_font, foreground=fg)
+
+# set up the tk window
+root = Tk()  # create tkinter window root
+root.configure(background=bg)
+root.title("Redbud Proposal Manager")  # set window title
+
+# set up the menu bar
+menubar = Menu(root)
+
+file_menu = Menu(menubar, tearoff=0)
+file_menu.add_command(label="New", command=create_new)
+file_menu.add_separator()
+file_menu.add_command(label="Quit", command=root.quit)
+menubar.add_cascade(label="File", menu=file_menu)
+
+help_menu = Menu(menubar, tearoff=0)
+help_menu.add_command(label="User Guide", command=user_guide)
+menubar.add_cascade(label="Help", menu=help_menu)
 
 # window styling
 root.geometry('625x500')
 
 # more info label
-more_info = tk.Text(root, bg='#abd3be', bd=0, height=7, yscrollcommand=True, xscrollcommand=True)
-more_info.insert(INSERT, "How to Use the Proposal Manager:\n\nThe program accepts an input file of the *.xlsx type using the \'Create Proposal\' button.\nData will be pulled from the sheet in the first/0 position within the Excel workbook.\nA budget proposal will be created and inserted in the second/1st position and the\nfile will automatically be opened in Excel when the program finishes.\n")
+#more_info = tk.Text(root, bg='#abd3be', bd=0, height=7, yscrollcommand=True, xscrollcommand=True)
+#more_info.insert(INSERT, "How to Use the Proposal Manager:\n\nThe program accepts an input file of the *.xlsx type using the \'Create Proposal\' button.\nData will be pulled from the sheet in the first/0 position within the Excel workbook.\nA budget proposal will be created and inserted in the second/1st position and the\nfile will automatically be opened in Excel when the program finishes.\n")
 
 # output label
-out = tk.Text(root, bg='#abd3be', bd=0, highlightthickness=0, yscrollcommand=True, xscrollcommand=True)
+out = Text(root, bg=bg, bd=0, highlightthickness=0, yscrollcommand=True, xscrollcommand=True)
 
-# bottom
-bottom = tk.Label(root, text="August 2020. Created by Nathalie Redick", bg='#abd3be', foreground='#2c543e')
-bottom.pack(side='bottom')
+# footer
+footer = Label(root, text="March 2021. Created by Nathalie Redick", bg=bg, foreground=fg)
+footer.pack(side='bottom')
 
-# button for proposal creation
-buttonframe = tk.Frame(root, bg='#abd3be')
+
+buttonframe = Frame(root, bg=bg)
 buttonframe.pack(fill='both', expand='no')
 
-create_button = tk.Button(buttonframe, text="Create Proposal", command=create, bg='#abd3be', foreground='#2c543e', padx=6, pady=6)
-create_button.pack(padx=5, pady=5)
+# button for rough budget creation
+creater_button = Button(buttonframe,
+                        relief='groove',
+                        text="Create Rough Budget",
+                        command=create_rough,
+                        bg=bg, foreground=fg,
+                        padx=6, pady=6)
+creater_button.pack(padx=5, pady=5)
 
-# button for more info/directions
-info_button = tk.Button(buttonframe, text="More Info", command=click, bg='#abd3be', foreground='#2c543e', padx=6, pady=6)
-info_button.pack(padx=5, pady=5)
+# button for actual budget creation
+createa_button = Button(buttonframe, compound=CENTER,
+                        relief='groove',
+                        text="Create Actual Budget",
+                        command=create_actual,
+                        bg=bg, foreground=fg,
+                        padx=6, pady=6)
+createa_button.pack(padx=5, pady=5)
 
 # show window
+root.config(menu=menubar)
 root.mainloop()
-

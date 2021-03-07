@@ -8,14 +8,14 @@ from openpyxl.styles import Border, Side, Alignment, Font
 
 #global vars
 result = []
-sub_D = []
-sub_I = []
-sub_Y = []
+_ITEMS_ = []
+_DESCRIPTIONS_ = []
+_PRICES_ = []
 sub_option = []
 
 count = 2
 total = 0
-#subtotal_border = Border(top=Side(style='thin'), bottom=Side(style='thin'), right=Side(style='thin'), left=Side(style='thin'))
+#subtotal_border = Border(top=Side(style='thin'), footer=Side(style='thin'), right=Side(style='thin'), left=Side(style='thin'))
 total_border = Border(top=Side(style='thin'), bottom=Side(style='double'), right=Side(style='thin'),
                       left=Side(style='thin'))
 side_border = Border(right=Side(style='thin'), left=Side(style='thin'))
@@ -95,7 +95,7 @@ def int_to_roman(num):  # function to convert phase numbers to roman numerals
 
 def set_indices(start_index, end_index, items, item_descriptions, item_prices,
                 is_option_ls):  # function to set global sub interval indices for each phase
-    global sub_D, sub_I, sub_Y, sub_option, specialConditions, count
+    global _ITEMS_, _DESCRIPTIONS_, _PRICES_, sub_option, specialConditions, count
     sub_D = items[start_index:end_index]
     sub_I = item_descriptions[start_index:end_index]
     sub_Y = item_prices[start_index:end_index]
@@ -106,7 +106,7 @@ def set_indices(start_index, end_index, items, item_descriptions, item_prices,
 
 
 def create_proposal(filename):
-    global result, sub_D, sub_I, sub_Y, sub_option, count, total, full_border, total_border, side_border, specialConditions, phase_names, is_option_ls, contractor, numbers, item_prices, item_descriptions, items, revision_dates, siding_finish_index
+    global result, _ITEMS_, _DESCRIPTIONS_, _PRICES_, sub_option, count, total, full_border, total_border, side_border, specialConditions, phase_names, is_option_ls, contractor, numbers, item_prices, item_descriptions, items, revision_dates, siding_finish_index
     #result.append(f'{time.ctime()} Starting proposal creation...')
 
     os.system(f'cp \"{filename}\" \"{filename}_temp.xlsx\"')  # make a temporary copy that can be opened as data only
@@ -136,7 +136,7 @@ def create_proposal(filename):
             item_descriptions = [x.value for x in ref[f'{couple[1]}']]
 
     for couple in col_names:  # item prices
-        if couple[0] == 'PRICE':
+        if couple[0] == 'ACTUAL':
             item_prices = [x.value for x in ref[f'{couple[1]}']]
 
     for couple in col_names:  # item is an option
@@ -239,18 +239,18 @@ def create_proposal(filename):
         except IndexError:
             set_indices(items.index(phase.upper()), items.index('BLANK ON PURPOSE', items.index(phase.upper())), items,
                         item_descriptions, item_prices, is_option_ls)
-        for index in range(len(sub_D)):
-            if sub_D[index] is not None and 'NOTES' not in sub_D[index] and 'BLANK ON PURPOSE' != sub_D[index] and \
-                    sub_I[index] is not None:
+        for index in range(len(_ITEMS_)):
+            if _ITEMS_[index] is not None and 'NOTES' not in _ITEMS_[index] and 'BLANK ON PURPOSE' != _ITEMS_[index] and \
+                    _DESCRIPTIONS_[index] is not None:
                 try:
-                    #print(sub_Y[index])
-                    cost = int(math.ceil((float(sub_Y[index]) / 5.0)) * 5)
+                    #print(_PRICES_[index])
+                    cost = int(math.ceil((float(_PRICES_[index]) / 5.0)) * 5)
                 except ValueError:
-                    cost = sub_Y[index]
+                    cost = _PRICES_[index]
                 except TypeError:
-                    cost = sub_Y[index]
+                    cost = _PRICES_[index]
                 to_write.append(
-                    [sub_D[index].strip().title(), sub_I[index].strip().capitalize(), cost, sub_option[index]])
+                    [_ITEMS_[index].strip().title(), _DESCRIPTIONS_[index].strip().capitalize(), cost, sub_option[index]])
         to_write.append('\n')
 
     # write items/des/prices to the proposal
