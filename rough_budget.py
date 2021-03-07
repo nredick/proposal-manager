@@ -121,7 +121,9 @@ def create_proposal(filename):
     col_names = [[cell.value, cell.column_letter] for cell in ref['1'] if
                  cell.value is not None]  # col letter from names in first row
 
-    if len(col_names) != 7:
+    print(col_names)
+
+    if len(col_names) < 7:
         result.append(f'{time.ctime()} ERROR: Missing a header on the budget sheet. Make sure you are using the correct template and that it is the first sheet in the Excel workbook.')
         return result
 
@@ -136,7 +138,7 @@ def create_proposal(filename):
             item_descriptions = [x.value for x in ref[f'{couple[1]}']]
 
     for couple in col_names:  # item prices
-        if couple[0] == 'ROUGH':
+        if couple[0] == 'ROUGH' or couple[0] == 'PRICE':
             item_prices = [x.value for x in ref[f'{couple[1]}']]
 
     for couple in col_names:  # item is an option
@@ -170,7 +172,7 @@ def create_proposal(filename):
 
     # add proposal sheet next to the budget sheet in both wbs
     result.append(f'{time.ctime()} Add proposal sheet to workbook.')
-    proposal = workbook_data.create_sheet(f'Budget', 1)
+    proposal = workbook_data.create_sheet(f'Rough Budget', 1)
 
     # formatting col widths
     result.append(f'{time.ctime()} Formatting proposal.')

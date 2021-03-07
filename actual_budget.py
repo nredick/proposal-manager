@@ -169,7 +169,7 @@ def create_proposal(filename):
 
     # add proposal sheet next to the budget sheet in both wbs
     result.append(f'{time.ctime()} Add proposal sheet to workbook.')
-    proposal = workbook_data.create_sheet(f'Budget', 1)
+    proposal = workbook_data.create_sheet(f'Actual Budget', 1)
 
     # formatting col widths
     result.append(f'{time.ctime()} Formatting proposal.')
