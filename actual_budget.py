@@ -1,4 +1,3 @@
-import datetime
 import math
 import os
 import time
@@ -85,20 +84,20 @@ def int_to_roman(num):  # function to convert phase numbers to roman numerals
         raise ValueError("Argument must be between 1 and 3999")
     ints = (1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1)
     nums = ('M', 'CM', 'D', 'CD', 'C', 'XC', 'L', 'XL', 'X', 'IX', 'V', 'IV', 'I')
-    result = []
+    res = []
     for n in range(len(ints)):
         c = int(num / ints[n])
-        result.append(nums[n] * c)
+        res.append(nums[n] * c)
         num -= ints[n] * c
-    return ''.join(result)
+    return ''.join(res)
 
 
 def set_indices(start_index, end_index, items, item_descriptions, item_prices,
                 is_option_ls):  # function to set global sub interval indices for each phase
     global _ITEMS_, _DESCRIPTIONS_, _PRICES_, sub_option, specialConditions, count
-    sub_D = items[start_index:end_index]
-    sub_I = item_descriptions[start_index:end_index]
-    sub_Y = item_prices[start_index:end_index]
+    _ITEMS_ = items[start_index:end_index]
+    _PRICES_ = item_descriptions[start_index:end_index]
+    _DESCRIPTIONS_ = item_prices[start_index:end_index]
     sub_option = is_option_ls[start_index:end_index]
 
 

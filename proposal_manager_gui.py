@@ -2,32 +2,29 @@ import os
 import time
 from tkinter import *
 from tkinter import filedialog
-from tkinter.messagebox import showinfo
-
 import rough_budget
 import actual_budget
 
-clicked = True
+clicked = False
+
 
 def user_guide():
-    frame = Frame(root, bg=bg)
-    string = StringVar()
-    msg = "How to Use the Proposal Manager" \
-          "\n\nThe program accepts an input file of the type *.xlsx where the first " \
-          "sheet of the workbook matches the budget proposal format. Data " \
-          "will be taken from the first sheet in the file. When the program is done, " \
-          "the file with the budget in the second position will be opened in Excel.\n" \
-          "Note that the Rough and Actual budget proposal creators run independently (i.e. you can create one " \
-          "without needing to create the other.\n" \
-          "A new template file can be created in the File dropdown menu."
-    string.set(msg)
+    if not clicked:
+        string = StringVar()
+        msg = "How to Use the Proposal Manager" \
+              "\n\nThe program accepts an input file of the type *.xlsx where the first " \
+              "sheet of the workbook matches the budget proposal format. Data " \
+              "will be taken from the first sheet in the file. When the program is done, " \
+              "the file with the budget in the second position will be opened in Excel.\n" \
+              "Note that the Rough and Actual budget proposal creators run independently (i.e. you can create one " \
+              "without needing to create the other.\n" \
+              "A new template file can be created in the File dropdown menu."
+        string.set(msg)
 
-    label = Message(root, textvariable=string, relief='raised')
-    label.pack()
-
-
-
-
+        label = Message(root, textvariable=string, relief='raised')
+        label.pack()
+    else:
+        pass
 
 
 def create_rough():
@@ -82,10 +79,6 @@ def create_new():
 fg = '#2f374a'
 bg = '#566a99'
 body_font = ('calibri', 10, 'bold', 'underline')
-#style = ttk.Style()
-
-# button style
-#style.configure('TButton', font=body_font, foreground=fg)
 
 # set up the tk window
 root = Tk()  # create tkinter window root
@@ -108,17 +101,12 @@ menubar.add_cascade(label="Help", menu=help_menu)
 # window styling
 root.geometry('625x500')
 
-# more info label
-#more_info = tk.Text(root, bg='#abd3be', bd=0, height=7, yscrollcommand=True, xscrollcommand=True)
-#more_info.insert(INSERT, "How to Use the Proposal Manager:\n\nThe program accepts an input file of the *.xlsx type using the \'Create Proposal\' button.\nData will be pulled from the sheet in the first/0 position within the Excel workbook.\nA budget proposal will be created and inserted in the second/1st position and the\nfile will automatically be opened in Excel when the program finishes.\n")
-
 # output label
 out = Text(root, bg=bg, bd=0, highlightthickness=0, yscrollcommand=True, xscrollcommand=True)
 
 # footer
 footer = Label(root, text="March 2021. Created by Nathalie Redick", bg=bg, foreground=fg)
 footer.pack(side='bottom')
-
 
 buttonframe = Frame(root, bg=bg)
 buttonframe.pack(fill='both', expand='no')
